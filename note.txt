@@ -1,0 +1,194 @@
+# Test on FCC pin
+
+pin 1 : (0A0)
+* shift l : 1B0
+* shift r : 1A2
+* alt r : 1A6
+* Amiga r : 1A4
+* Amiga l : 1A0
+* alt l : 1A1
+* ctrl l : 1A3
+
+pin 2 : (0A1)
+* help : 1B5
+* arrow l : 1B3
+* arrow r : 1B1
+* arrow u : 1B4
+* arrow d : 1A7
+
+pin 3 : (0A2)
+* F10 : 1B5 
+* del : 1B1
+* backspace : 1A7
+* enter : 1B3
+
+pin 4 : (0A3)
+* F9 : 1B5
+* + : 1B4
+* ] : 1B3
+* void l : 1B1
+* space : 1A7
+
+pin 5 : (0A4)
+* F8 : 1B5
+* _ : 1B4
+* { : 1B3
+* @ : 1B1
+
+pin 6 : (0A5)
+* F7 : 1B5
+* ) : 1B4
+* p : 1B6
+* : : 1B1 
+* ? : 1A7
+
+pin 7 : (0A6)
+* ( : 1B4
+* o : 1B3
+* l : 1B1 
+* > : 1A7 
+
+pin 8 : (0A7)
+* F6 : 1B5
+* * : 1B4
+* i : 1B3 
+* k : 1B1
+* < : 1A7
+
+pin 9 : (0B0)
+* & : 1B4
+* u : 1B3
+* j : 1B1
+* m : 1A7
+
+pin 10 : (0B1)
+* F5 : 1B5
+* ^ : 1B4
+* y : 1B3 
+* h : 1B1
+* n : 1A7
+
+pin 11 : (0B2)
+* F4 : 1B5
+* % : 1B4
+* t : 1B3
+* g : 1B1 
+* b : 1A7
+
+pin 12 : (0B3)
+* F3 : 1B5
+* $ : 1B4
+* r : 1B3
+* f : 1B1
+* v : 1A7
+
+pin 13 : (0B4)
+* F2 : 1B5 
+* livre : 1B4 
+* e : 1B3 
+* d : 1B1
+* c : 1A7 
+
+pin 14 (0B5)
+* F1 : 1B5
+* " : 1B4
+* w : 1B3
+* s : 1B1
+* x : 1A7
+
+pin 15 (0B6)
+* ! : 1B4
+* q : 1B3 
+* a : 1B1
+* z : 1A7
+
+pin 16 (0B7)
+* esc : 1B5
+* tild : 1B4
+* tab : 1B3
+* cap lock : 1B1
+* void l : 1A7
+
+# touch vs key_code
+
+The amiga keyboard is a matrix style keyboard, so your each key is locate thanks
+to two cordonnates (i,j). By concatenating i and j, it generates the following 
+key codes :
+
+esc : 0xDF
+F1 : 0xDD
+F2 : 0xDC
+F3 : 0xDB
+F4 : 0xDA
+F5 : 0xD9
+F6 : 0xD7
+F7 : 0xD5
+F8 : 0xD4
+F9 : 0xD3
+F10 : 0xD2
+help : 0xD1
+tild : 0xCF
+! : 0xCE
+" : 0xCD
+£ : 0xCC
+% : 0xCA
+^ : 0xC9
+& : 0xC8
+* : 0xC7
+( : 0xC6
+) : 0xC5
+_ : 0xC4
++ : 0xC3
+| : 0xC2
+backspace : 0x72 
+del : 0x92
+tab : 0xBF
+q : 0xBE
+w : 0xBD
+e : 0xBC
+r : 0xBB
+t : 0xBA
+y : 0xB9
+u : 0xB8
+i : 0xB7
+o : 0xB6
+p : 0xB5
+{ : 0xB4
+} : 0xB3
+enter : 0xB2
+ctrl : 0x30
+caps locks : 0x9F
+a : 0x9E
+s : 0x9D
+d : 0x9C
+f : 0x9B
+g : 0x9A
+h : 0x99
+j : 0x98
+k : 0x97
+l : 0x96
+: : 0x95
+@ : 0x94
+void right : 0x93
+shift left : 0x20
+void left : 0x7F
+z : 0xZe
+x : 0x7D
+c : 0x7C
+v : 0x7B
+b : 0x7A
+n : 0x79
+m : 0x78
+< : 0x77
+> : 0x76
+? : 0x75
+shift right : 0x80
+arrow up : 0xC1
+alt left : 0x10
+amiga left : 0x00
+space : 0x73
+amiga right : 0x40
+alt right : 0x60
+left arrow : 0xB1
+down arrow : 0x71
+right arrow : 0x91
