@@ -1,0 +1,6 @@
+1 : MISO -> PIN12
+2 : VCC -> VCC
+3 : SCK -> PIN13
+4 : MOSI -> PIN11
+5 : RST -> PIN10
+6 : GND ->GND
