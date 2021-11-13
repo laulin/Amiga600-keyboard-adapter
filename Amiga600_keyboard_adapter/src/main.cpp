@@ -1,16 +1,26 @@
 #include <Arduino.h>
+#include "spi.h"
+//#include "hw_uart.h"
+#include <stdint.h>
+#include <stdio.h>
+#include <util/delay.h>
+#include <avr/io.h>
+#include "amiga_kb.h"
+
+#define KEYS_SIZE 10
+uint8_t keys[KEYS_SIZE] = {0};
 
 void setup()
 {
-  // initialize digital pin LED_BUILTIN as an output.
-  pinMode(LED_BUILTIN, OUTPUT);
+  init_spi();
+  //init_hw_uart(baudrate_115200);
+  init_kb_reader();
 }
 
 // the loop function runs over and over again forever
 void loop()
 {
-  digitalWrite(LED_BUILTIN, HIGH); // turn the LED on (HIGH is the voltage level)
-  delay(100);                     // wait for a second
-  digitalWrite(LED_BUILTIN, LOW);  // turn the LED off by making the voltage LOW
+  uint8_t read_keys = decode_kb(keys, KEYS_SIZE);
+  display_keys(keys, read_keys);
   delay(10);                     // wait for a second
 }

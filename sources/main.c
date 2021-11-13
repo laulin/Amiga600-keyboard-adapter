@@ -7,12 +7,12 @@
 
 // example on how to use amiga keyboard decoding
 
-#define KEYS_SIZE 10
+
 
 int main()
 {
     init_spi();
-    init_hw_uart(baudrate_115200);
+    //init_hw_uart(baudrate_115200);
     init_kb_reader();
 
     uint8_t keys[KEYS_SIZE] = {0};
@@ -20,7 +20,7 @@ int main()
     while (1)
     {
         uint8_t read_keys = decode_kb(keys, KEYS_SIZE);
-        display_keys(keys, read_keys);
+        //display_keys(keys, read_keys);
         _delay_ms(10);
     }
     
