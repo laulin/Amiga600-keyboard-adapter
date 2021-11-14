@@ -10,8 +10,54 @@
 
 #define KEYS_SIZE 10
 uint8_t keys[KEYS_SIZE] = {0};
-uint8_t hit = 0;
-uint8_t hold = 0;
+#define STATE_SIZE 0xE0
+#define KEY_HIT 0x01
+#define KEY_HOLD 0x02
+uint8_t state[STATE_SIZE] = {0};
+
+void reset_state_hit()
+{
+  for (uint8_t i = 0; i < STATE_SIZE; i++)
+  {
+    state[i] = state[i] & (~KEY_HIT);
+  }
+}
+
+void set_state_hit(uint8_t code)
+{
+  state[code] |= KEY_HIT;
+}
+
+void update_state(void (*press)(uint8_t code), void (*release)(uint8_t code))
+{
+  for (uint8_t code = 0; code < STATE_SIZE; code++)
+  {
+    uint8_t s = state[code];
+    if (s == KEY_HIT)
+    {
+      state[code] = KEY_HOLD;
+      press(code);
+
+    }
+    if (s == KEY_HOLD)
+    {
+      state[code] = 0;
+      release(code);
+    }
+  }
+}
+
+void press_key(uint8_t code)
+{
+  Serial.print("Press ");
+  Serial.println(code);
+}
+
+void release_key(uint8_t code)
+{
+  Serial.print("Releases ");
+  Serial.println(code);
+}
 
 void setup()
 {
@@ -29,26 +75,10 @@ void loop()
   uint8_t read_keys = decode_kb(keys, KEYS_SIZE);
   //display_keys(keys, read_keys);
   delay(10);
-  hit = 0;
+  reset_state_hit();
   for (uint8_t i = 0; i < read_keys; i++)
   {
-    if (keys[i] == 0xBE)
-    {
-      hit = 1;
-    }
+    set_state_hit(keys[i]);
   }
-  if (hit == 1 && hold == 0)
-  {
-    Keyboard.press('a');
-    Serial.println("Pressed");
-    hold = 1;
-  }
-  if(hit == 0 && hold == 1)
-  {
-    Keyboard.release('a');
-    Serial.println("Release");
-    hold = 0;
-  }
-  //Serial.println("Line !");
-  //Serial.println(read_keys);
+  update_state(press_key, release_key);
 }
