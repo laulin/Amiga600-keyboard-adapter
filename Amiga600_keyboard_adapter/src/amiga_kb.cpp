@@ -5,11 +5,12 @@
 #include <stdio.h>
 #include <util/delay.h>
 #include <avr/io.h>
+#include <Arduino.h>
 
-#define SELECT_DDR DDRB
-#define SELECT_PORT PORTB
-#define SELECT_0 1
-#define SELECT_1 2
+#define SELECT_DDR DDRD
+#define SELECT_PORT PORTD
+#define SELECT_0 12
+#define SELECT_1 9
 #define ENABLE 1
 #define DISABLE 0
 #define LED1 0x40
@@ -18,14 +19,13 @@
 
 void select_kb(uint8_t chip_index, uint8_t enable)
 {
-    uint8_t mask = chip_index;
     if (enable == ENABLE)
     {
-        SELECT_PORT &= ~chip_index;
+        digitalWrite(chip_index, 0);
     }
     else
     {
-        SELECT_PORT |= chip_index;
+        digitalWrite(chip_index, 1);
     }
 }
 
@@ -58,9 +58,10 @@ void write_kb_led(uint8_t led)
 
 void init_kb_reader(void)
 {
-    // set PB0 and PB1 as output and set 1 to each
-    SELECT_DDR |= SELECT_0 | SELECT_1;
-    SELECT_PORT |= SELECT_0 | SELECT_1;
+    pinMode(SELECT_0, OUTPUT);
+    pinMode(SELECT_1, OUTPUT);
+    digitalWrite(SELECT_0, 1);
+    digitalWrite(SELECT_1, 1);
 
     // set pullup on inputs of chip 0
     write_byte_port_expander(SELECT_0, GPPUA, 0xFF);
@@ -98,7 +99,7 @@ uint8_t decode_kb(uint8_t* key, uint8_t key_number)
         {
             uint16_t mask = 1 << j;
             uint16_t masked = y & mask;
-            if (masked == 0 & key_counter < key_number)
+            if ((masked == 0) & (key_counter < key_number))
             {
                 uint8_t key_code = i | (j << 4);
                 key[key_counter] = key_code;
@@ -114,10 +115,9 @@ uint8_t decode_kb(uint8_t* key, uint8_t key_number)
 
 void display_keys(uint8_t *key, uint8_t key_number)
 {
-    uint8_t CLEAR[4] = "\033[2J";
-    uint8_t HOME[3] = "\033[H";
-    uint8_t buffer[DISPLAY_KEYS_BUFFER_SIZE] = {0};
-    uint8_t written = 0;
+    char CLEAR[6] = "\033[2J\0";
+    char HOME[5] = "\033[H\0";
+    char buffer[DISPLAY_KEYS_BUFFER_SIZE] = {0};
 
     if(key_number == 0)
     {
@@ -125,13 +125,12 @@ void display_keys(uint8_t *key, uint8_t key_number)
     }
 
     // clear the string
-    //hw_uart_write_array(CLEAR, 4);
-    //hw_uart_write_array(HOME, 3);
-    
+    Serial.print(CLEAR);
+    Serial.print(HOME);
 
     for(uint8_t i=0; i< key_number; i++)
     {
-        written = snprintf(buffer, DISPLAY_KEYS_BUFFER_SIZE, "0x%x\n", key[i]);
-        //hw_uart_write_array(buffer, written);
+        snprintf(buffer, DISPLAY_KEYS_BUFFER_SIZE, "0x%x", key[i]);
+        Serial.println(buffer);
     }
 }
