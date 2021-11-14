@@ -7,7 +7,10 @@
 #include <avr/io.h>
 #include "amiga_kb.h"
 #include "keymap.h"
-#include <Keyboard.h>
+
+#define HID_CUSTOM_LAYOUT
+#define LAYOUT_UNITED_KINGDOM
+#include <HID-Project.h>
 
 #define KEYS_SIZE 10
 uint8_t keys[KEYS_SIZE] = {0};
