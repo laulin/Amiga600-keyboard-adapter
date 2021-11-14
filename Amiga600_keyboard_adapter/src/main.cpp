@@ -6,6 +6,7 @@
 #include <util/delay.h>
 #include <avr/io.h>
 #include "amiga_kb.h"
+#include "keymap.h"
 #include <Keyboard.h>
 
 #define KEYS_SIZE 10
@@ -14,6 +15,7 @@ uint8_t keys[KEYS_SIZE] = {0};
 #define KEY_HIT 0x01
 #define KEY_HOLD 0x02
 uint8_t state[STATE_SIZE] = {0};
+
 
 void reset_state_hit()
 {
@@ -50,13 +52,23 @@ void update_state(void (*press)(uint8_t code), void (*release)(uint8_t code))
 void press_key(uint8_t code)
 {
   Serial.print("Press ");
-  Serial.println(code);
+  Serial.println(code, HEX);
+  uint8_t keyboard_code = KEYMAP[code];
+  if(keyboard_code != 0)
+  {
+    Keyboard.press(keyboard_code);
+  }
 }
 
 void release_key(uint8_t code)
 {
   Serial.print("Releases ");
-  Serial.println(code);
+  Serial.println(code, HEX);
+  uint8_t keyboard_code = KEYMAP[code];
+  if (keyboard_code != 0)
+  {
+    Keyboard.release(keyboard_code);
+  }
 }
 
 void setup()
