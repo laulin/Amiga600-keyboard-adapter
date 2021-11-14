@@ -52,8 +52,10 @@ void update_state(void (*press)(uint8_t code), void (*release)(uint8_t code))
 void press_key(uint8_t code)
 {
   Serial.print("Press ");
-  Serial.println(code, HEX);
+  Serial.print(code, HEX);
   uint8_t keyboard_code = KEYMAP[code];
+  Serial.print(" -> ");
+  Serial.println(keyboard_code, HEX);
   if(keyboard_code != 0)
   {
     Keyboard.press(keyboard_code);
@@ -63,8 +65,10 @@ void press_key(uint8_t code)
 void release_key(uint8_t code)
 {
   Serial.print("Releases ");
-  Serial.println(code, HEX);
+  Serial.print(code, HEX);
   uint8_t keyboard_code = KEYMAP[code];
+  Serial.print(" -> ");
+  Serial.println(keyboard_code, HEX);
   if (keyboard_code != 0)
   {
     Keyboard.release(keyboard_code);
@@ -86,7 +90,7 @@ void loop()
 {
   uint8_t read_keys = decode_kb(keys, KEYS_SIZE);
   //display_keys(keys, read_keys);
-  delay(10);
+  //delay(10);
   reset_state_hit();
   for (uint8_t i = 0; i < read_keys; i++)
   {
