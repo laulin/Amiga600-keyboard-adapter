@@ -192,3 +192,7 @@ alt right : 0x60
 left arrow : 0xB1
 down arrow : 0x71
 right arrow : 0x91
+
+https://askubuntu.com/questions/510024/what-are-the-steps-needed-to-create-new-keyboard-layout-on-ubuntu
+https://forum.arduino.cc/t/librairie-keyboard-utilisation-explication-et-conversion-azerty/530938/2
+https://dyrk.org/2018/12/09/arduino-simuler-un-clavier-azerty/
