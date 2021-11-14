@@ -131,7 +131,7 @@ const uint8_t KEYMAP[256] = {
     'c' , // 0x7c : c
     'x' , // 0x7d : x
     'z' , // 0x7e : z
-    0 , // 0x7f : 
+    '<' , // 0x7f : void left
     KEY_RIGHT_SHIFT , // 0x80 : shift right
     0 , // 0x81 : 
     0 , // 0x82 : 
