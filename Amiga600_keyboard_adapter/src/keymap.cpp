@@ -130,7 +130,7 @@ const uint8_t KEYMAP[256] = {
     'v' , // 0x7b : v
     'c' , // 0x7c : c
     'x' , // 0x7d : x
-    'w' , // 0x7e : z
+    'z' , // 0x7e : z
     0 , // 0x7f : 
     KEY_RIGHT_SHIFT , // 0x80 : shift right
     0 , // 0x81 : 
@@ -162,7 +162,7 @@ const uint8_t KEYMAP[256] = {
     'f' , // 0x9b : f
     'd' , // 0x9c : d
     's' , // 0x9d : s
-    'q' , // 0x9e : a
+    'a' , // 0x9e : a
     KEY_CAPS_LOCK , // 0x9f : caps locks
     0 , // 0xa0 : 
     0 , // 0xa1 : 
@@ -194,7 +194,7 @@ const uint8_t KEYMAP[256] = {
     'r' , // 0xbb : r
     'e' , // 0xbc : e
     'z' , // 0xbd : w
-    'a' , // 0xbe : q
+    'q' , // 0xbe : q
     KEY_TAB , // 0xbf : tab
     0 , // 0xc0 : 
     KEY_UP_ARROW , // 0xc1 : arrow up

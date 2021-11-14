@@ -28,7 +28,7 @@ _;0xC4;-;KO ()/°)
 backspace;0x72;KEY_BACKSPACE;OK
 del;0x92;KEY_DELETE;K
 tab;0xBF;KEY_TAB;OK pour min, not shift
-q;0xBE;a;OK
+q;0xBE;q;OK
 w;0xBD;z;OK
 e;0xBC;e;OK
 r;0xBB;r;OK
@@ -43,7 +43,7 @@ p;0xB5;p;OK
 enter;0xB2;KEY_RETURN;OK
 ctrl;0x30;KEY_LEFT_CTRL;
 caps locks;0x9F;KEY_CAPS_LOCK;OK
-a;0x9E;q;OK
+a;0x9E;a;OK
 s;0x9D;s;OK
 d;0x9C;d;OK
 f;0x9B;f;OK
@@ -57,7 +57,7 @@ l;0x96;l;OK
 void right;0x93;;not used
 shift left;0x20;KEY_LEFT_SHIFT;OK
 void left;0x7F;;not used
-z;0x7e;w;OK
+z;0x7e;z;OK
 x;0x7D;x;OK
 c;0x7C;c;OK
 v;0x7B;v;OK
