@@ -2,6 +2,7 @@ import csv
 import re
 
 # Convert CSV to C array to create a LUT for raw code to keyboard code
+# python3 keymap.py > Amiga600_keyboard_adapter/src/keymap.cpp
 
 ARRAY_SIZE = 256
 lut = [0]*ARRAY_SIZE
