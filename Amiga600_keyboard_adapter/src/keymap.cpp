@@ -20,7 +20,7 @@ const uint8_t KEYMAP[256] = {
     0 , // 0xd : 
     0 , // 0xe : 
     0 , // 0xf : 
-    KEY_RIGHT_CTRL , // 0x10 : alt left
+    KEY_LEFT_ALT , // 0x10 : alt left
     0 , // 0x11 : 
     0 , // 0x12 : 
     0 , // 0x13 : 
@@ -118,13 +118,13 @@ const uint8_t KEYMAP[256] = {
     0 , // 0x6f : 
     0 , // 0x70 : 
     KEY_DOWN_ARROW , // 0x71 : down arrow
-    KEY_BACKSPACE  , // 0x72 : backspace
+    KEY_BACKSPACE , // 0x72 : backspace
     0x20 , // 0x73 : space
     0 , // 0x74 : 
     ',' , // 0x75 : ?
     '>' , // 0x76 : >
     '<' , // 0x77 : <
-    'm' , // 0x78 : m
+    0x59 , // 0x78 : m
     'n' , // 0x79 : n
     'b' , // 0x7a : b
     'v' , // 0x7b : v
@@ -153,7 +153,7 @@ const uint8_t KEYMAP[256] = {
     KEY_DELETE , // 0x92 : del
     0 , // 0x93 : 
     '*' , // 0x94 : @
-    ':' , // 0x95 : :
+    0x59 , // 0x95 : :
     'l' , // 0x96 : l
     'k' , // 0x97 : k
     'j' , // 0x98 : j
@@ -200,7 +200,7 @@ const uint8_t KEYMAP[256] = {
     KEY_UP_ARROW , // 0xc1 : arrow up
     '\\' , // 0xc2 : |
     '=' , // 0xc3 : +
-    '_' , // 0xc4 : _
+    '-' , // 0xc4 : _
     '0' , // 0xc5 : )
     '9' , // 0xc6 : (
     '8' , // 0xc7 : *
@@ -211,7 +211,7 @@ const uint8_t KEYMAP[256] = {
     '3' , // 0xcc : £
     '2' , // 0xcd : '"'
     '1' , // 0xce : !
-    '~' , // 0xcf : tild
+    '`' , // 0xcf : tild
     0 , // 0xd0 : 
     0 , // 0xd1 : 
     KEY_F10 , // 0xd2 : F10
