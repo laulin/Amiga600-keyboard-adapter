@@ -3,6 +3,7 @@
 This repository is about a board and the related software to make an 
 Amiga 600 keyboard adapter. It manages SPI, Direct I/O and USB !
 
+[**UPDATE**] : The keyboard is now fonctional but some keys are not well binded.
 # Why
 
 Well, Amiga computers were an important part of computer history. When I was very young, a friend introduced me an Amiga. And I always found the design very impressive.
@@ -63,9 +64,7 @@ PCB:
 
 # Current status
 
-Currently, you can find source code need to control port expander via raw spi. It is also usable to implement in arduino micro.
-
-Next step is to get an arduino micro to enable usb.
+Currently, you can use the keyboard on USB. Some keys need to be fixed for a perfect stuff.
 
 # Thanks
 
