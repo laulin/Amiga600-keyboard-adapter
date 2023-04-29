@@ -1,100 +1,46 @@
 #include <Arduino.h>
 #include "spi.h"
-//#include "hw_uart.h"
 #include <stdint.h>
 #include <stdio.h>
 #include <util/delay.h>
 #include <avr/io.h>
 #include "amiga_kb.h"
-#include "keymap.h"
-#include <Keyboard.h>
+#include <string.h>
 
-#define KEYS_SIZE 10
+#define KEYS_SIZE 16*14
 uint8_t keys[KEYS_SIZE] = {0};
-#define STATE_SIZE 0xE0
-#define KEY_HIT 0x01
-#define KEY_HOLD 0x02
-uint8_t state[STATE_SIZE] = {0};
+#define HEADER_SIZE  3
+const char * HEADER = "KBN";
+#define LENGTH_SIZE (1)
+#define OUTPUT_SIZE (KEYS_SIZE + HEADER_SIZE + LENGTH_SIZE) 
+uint8_t output[OUTPUT_SIZE] = {0};
+#define HEADER_OFFSET 0
+#define LENGTH_OFFSET (HEADER_OFFSET + HEADER_SIZE)
+#define DATA_OFFSET (LENGTH_OFFSET + LENGTH_SIZE)
 
-
-void reset_state_hit()
-{
-  for (uint8_t i = 0; i < STATE_SIZE; i++)
-  {
-    state[i] = state[i] & (~KEY_HIT);
-  }
-}
-
-void set_state_hit(uint8_t code)
-{
-  state[code] |= KEY_HIT;
-}
-
-void update_state(void (*press)(uint8_t code), void (*release)(uint8_t code))
-{
-  for (uint8_t code = 0; code < STATE_SIZE; code++)
-  {
-    uint8_t s = state[code];
-    if (s == KEY_HIT)
-    {
-      state[code] = KEY_HOLD;
-      press(code);
-
-    }
-    if (s == KEY_HOLD)
-    {
-      state[code] = 0;
-      release(code);
-    }
-  }
-}
-
-void press_key(uint8_t code)
-{
-  Serial.print("Press ");
-  Serial.print(code, HEX);
-  uint8_t keyboard_code = KEYMAP[code];
-  Serial.print(" -> ");
-  Serial.println(keyboard_code, HEX);
-  if(keyboard_code != 0)
-  {
-    Keyboard.press(keyboard_code);
-  }
-}
-
-void release_key(uint8_t code)
-{
-  Serial.print("Releases ");
-  Serial.print(code, HEX);
-  uint8_t keyboard_code = KEYMAP[code];
-  Serial.print(" -> ");
-  Serial.println(keyboard_code, HEX);
-  if (keyboard_code != 0)
-  {
-    Keyboard.release(keyboard_code);
-  }
-}
+const unsigned long interval = 10000; 
+unsigned long previousMicros = 0;
 
 void setup()
 {
   init_spi();
-  //init_hw_uart(baudrate_115200);
   init_kb_reader();
   Serial.begin(115200);
-  Serial.println("Test keyboard ready !");
-  Keyboard.begin();
+  memcpy(&output[HEADER_OFFSET], HEADER, HEADER_SIZE);
 }
 
 // the loop function runs over and over again forever
 void loop()
 {
+  previousMicros = micros();
   uint8_t read_keys = decode_kb(keys, KEYS_SIZE);
-  //display_keys(keys, read_keys);
-  //delay(10);
-  reset_state_hit();
-  for (uint8_t i = 0; i < read_keys; i++)
+  output[LENGTH_OFFSET] = read_keys;
+  memcpy(&output[DATA_OFFSET], keys, read_keys);
+
+  Serial.write(output, HEADER_SIZE + LENGTH_SIZE + read_keys);
+
+  while (micros() - previousMicros < interval)
   {
-    set_state_hit(keys[i]);
+
   }
-  update_state(press_key, release_key);
 }
