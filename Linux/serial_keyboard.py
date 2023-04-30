@@ -3,16 +3,7 @@ from pynput.keyboard import Controller
 from pynput.keyboard import Key
 
 
-arduino_port = "/dev/ttyACM0"
-arduino_baudrate = 460800
-
-ser = serial.Serial(arduino_port, arduino_baudrate)
-keyboard = Controller()
-
-pressed_keys = {}
-released_keys = set()
-
-LABELS = {
+UK_LABELS = {
     0xDF : "esc",
     0xDD : "F1",
     0xDC : "F2",
@@ -104,18 +95,8 @@ VOID = 0
 DEFAULT_MASK = VOID | SHIFT
 NO_MOD_MASK = VOID
 
-modifiers = VOID
 
-modifier_masks = {
-    "shift" : SHIFT,
-    "alt" : ALT,
-    "amiga_right" : AMIGA_RIGHT,
-    "amiga_left" : AMIGA_LEFT,
-    "ctrl" : CTRL,
-    "caps_locks" : CAPS_LOCKS
-}
-
-keymap = {
+UK_KEYMAP = {
     "tild":{
         SHIFT:{"value" : "`"},
         VOID:{"value" : "~"},
@@ -469,121 +450,126 @@ keymap = {
 
 }
 
-def set_modifiers():
-    global modifiers
-    modifiers = modifiers & CAPS_LOCKS
-
-    if "alt_right" in pressed_keys or "alt_left" in pressed_keys:
-        modifiers |= ALT
-
-    if "ctrl" in pressed_keys:
-        modifiers |= CTRL
-
-    if "amiga_right" in pressed_keys:
-        modifiers |= AMIGA_RIGHT
-
-    if "amiga_left" in pressed_keys:
-        modifiers |= AMIGA_LEFT
-
-    if "caps_locks" in pressed_keys:
-        if pressed_keys["caps_locks"] == 0:
-            modifiers ^= CAPS_LOCKS
-
-    if ("shift_right" in pressed_keys or "shift_left" in pressed_keys) ^ (modifiers & CAPS_LOCKS == CAPS_LOCKS):
-        modifiers |= SHIFT
 
 
-def read_kbn_frame(ser:serial.Serial)->bytes:
-    """
-    This function reads a frame of data from a serial port that starts with the characters "KBN" and
-    returns the data payload of the frame.
-    
-    :param ser: The parameter "ser" is a serial.Serial object, which is an instance of the Serial class
-    from the PySerial library. It represents a serial port connection and is used to read and write data
-    to and from the port
-    :type ser: serial.Serial
-    :return: a bytes object, which is the data received from the serial port after successfully reading
-    a KBN frame.
-    """
-    buffer = []
-    while True:
-        if len(buffer)  == 0 :
-            data = ser.read(1)
-            if data == b"K":  
-                buffer.append(data)
-        elif len(buffer)  == 1 :
-            data = ser.read(1)
-            if data == b"B":  
-                buffer.append(data)
-        elif len(buffer)  == 2 :
-            data = ser.read(1)
-            if data == b"N":  
-                buffer.append(data)
-        elif len(buffer) == 3 : 
-            if buffer != [b"K", b"B", b"N"]:
-                buffer.clear()
-            else:
-                size = int.from_bytes(ser.read(1), "little")
-                if size > 0:
-                    return ser.read(size)
+
+class SerialKeyboard:
+    def __init__(self, port:str="/dev/ttyACM0", baudrate:int=460800, labels=UK_LABELS, keymap=UK_KEYMAP, first_repeat:int=50, other_repeat:int=10):
+        self._port = port
+        self._baudrate = baudrate
+        self._serial = None
+        self._keyboard = Controller()
+
+        self._labels = labels
+        self._keymap = keymap
+        self._first_repeat = first_repeat
+        self._other_repeat = other_repeat
+
+        self._modifiers = VOID
+        self._applied_keymap = {}
+        self._pressed_keys = {}
+
+    def setup(self):
+        self._serial = serial.Serial(self._port, self._baudrate)
+
+    def read_kbn_frame(self)->list:
+        buffer = []
+        while True:
+            if len(buffer)  == 0 :
+                data = self._serial.read(1)
+                if data == b"K":  
+                    buffer.append(data)
+            elif len(buffer)  == 1 :
+                data = self._serial.read(1)
+                if data == b"B":  
+                    buffer.append(data)
+            elif len(buffer)  == 2 :
+                data = self._serial.read(1)
+                if data == b"N":  
+                    buffer.append(data)
+            elif len(buffer) == 3 : 
+                if buffer != [b"K", b"B", b"N"]:
+                    buffer.clear()
                 else:
-                    return b""
+                    size = int.from_bytes(self._serial.read(1), "little")
+                    if size > 0:
+                        return [self._labels [k] for k in self._serial.read(size)]
+                    else:
+                        return []
+                    
+    def do(self):
+        while True:
+            keys = self.read_kbn_frame()
+            for key in keys:
+                if key not in self._pressed_keys:
+                    self._pressed_keys[key] = 0
+                else:
+                    self._pressed_keys[key] += 1
 
-applied_keymap = {}
+            released_keys = set(self._pressed_keys.keys()) - set(keys)
 
-def get_key_configuration(labeled_key, mask):
-    return keymap[labeled_key].get(mask, {})
+            for release_key in released_keys:
+                del self._pressed_keys[release_key]
 
-def apply_keymap():
-    for labeled_key in pressed_keys:
-        mask = modifiers & keymap[labeled_key]["key_mask"]
-        conf = get_key_configuration(labeled_key, mask)
+            self.set_modifiers()
 
-        if "value" in conf:
-            real_key = conf["value"]
-            if labeled_key in applied_keymap and applied_keymap[labeled_key] != real_key:
-                pressed_keys[labeled_key] = 0
-                keyboard.release(applied_keymap[labeled_key])
-                del applied_keymap[labeled_key]
+            self.apply_keymap(released_keys)
 
-            if pressed_keys[labeled_key] == 0:
-                applied_keymap[labeled_key] = real_key
-                keyboard.press(real_key)
-                #print(f"press {labeled_key} ({real_key})")
-            if pressed_keys[labeled_key] > 30:
-                keyboard.press(real_key)
-                pressed_keys[labeled_key] = 25
-                #print(f"press {labeled_key} ({real_key})")
+    def set_modifiers(self):
+        self._modifiers = self._modifiers & CAPS_LOCKS
 
-    for labeled_key in released_keys:
-        if labeled_key in applied_keymap:
-            keyboard.release(applied_keymap[labeled_key])
-            del applied_keymap[labeled_key]
+        if "alt_right" in self._pressed_keys or "alt_left" in self._pressed_keys:
+            self._modifiers |= ALT
 
+        if "ctrl" in self._pressed_keys:
+            self._modifiers |= CTRL
 
-try:
-    while True:
-        keys = read_kbn_frame(ser)
-        keys = [LABELS[k] for k in keys]
-        for key in keys:
-            if key not in pressed_keys:
-                pressed_keys[key] = 0
-            else:
-                pressed_keys[key] += 1
+        if "amiga_right" in self._pressed_keys:
+            self._modifiers |= AMIGA_RIGHT
 
-        released_keys = set(pressed_keys.keys()) - set(keys)
+        if "amiga_left" in self._pressed_keys:
+            self._modifiers |= AMIGA_LEFT
 
-        for release_key in released_keys:
-            del pressed_keys[release_key]
+        if "caps_locks" in self._pressed_keys:
+            if self._pressed_keys["caps_locks"] == 0:
+                self._modifiers ^= CAPS_LOCKS
 
-        # if len(pressed_keys) > 0:
-        #     print(pressed_keys)
-        set_modifiers()
-        # if any(modifiers.values()):
-        #     print(modifiers)
+        if ("shift_right" in self._pressed_keys or "shift_left" in self._pressed_keys) ^ (self._modifiers & CAPS_LOCKS == CAPS_LOCKS):
+            self._modifiers |= SHIFT
 
-        apply_keymap()
-        
+    def apply_keymap(self, released_keys:set):
+        for labeled_key in self._pressed_keys:
+            mask = self._modifiers & self._keymap[labeled_key]["key_mask"]
+            conf = self._keymap[labeled_key][mask]
 
-except KeyboardInterrupt:
-    ser.close()
+            if "value" in conf:
+                real_key = conf["value"]
+                if labeled_key in self._applied_keymap and self._applied_keymap[labeled_key] != real_key:
+                    self._pressed_keys[labeled_key] = 0
+                    self._keyboard.release(self._applied_keymap[labeled_key])
+                    del self._applied_keymap[labeled_key]
+
+                if self._pressed_keys[labeled_key] == 0:
+                    self._applied_keymap[labeled_key] = real_key
+                    self._keyboard.press(real_key)
+                if self._pressed_keys[labeled_key] > (self._first_repeat + self._other_repeat):
+                    self._keyboard.press(real_key)
+                    self._pressed_keys[labeled_key] = self._first_repeat
+
+        for labeled_key in released_keys:
+            if labeled_key in self._applied_keymap:
+                self._keyboard.release(self._applied_keymap[labeled_key])
+                del self._applied_keymap[labeled_key]
+
+    def close(self):
+        self._serial.close()
+            
+
+if __name__ == "__main__":
+    serial_keyboard = SerialKeyboard()
+    serial_keyboard.setup()
+    try:
+        serial_keyboard.do()            
+
+    except KeyboardInterrupt:
+        serial_keyboard.close()
