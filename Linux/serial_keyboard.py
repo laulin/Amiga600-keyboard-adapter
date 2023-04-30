@@ -100,7 +100,9 @@ AMIGA_LEFT = 8
 CTRL = 16
 CAPS_LOCKS = 32
 VOID = 0
-IGNORE = -1
+
+DEFAULT_MASK = VOID | SHIFT
+NO_MOD_MASK = VOID
 
 modifiers = VOID
 
@@ -117,276 +119,351 @@ keymap = {
     "tild":{
         SHIFT:{"value" : "`"},
         VOID:{"value" : "~"},
+        "key_mask":DEFAULT_MASK
     },
     "1":{
         SHIFT:{"value" : "!"},
         VOID:{"value" : "1"},
+        "key_mask":DEFAULT_MASK
     },
     "2":{
         SHIFT:{"value" : "\""},
         VOID:{"value" : "2"},
+        "key_mask":DEFAULT_MASK
     },
     "3":{
         SHIFT:{"value" : "£"},
         VOID:{"value" : "3"},
+        "key_mask":DEFAULT_MASK
     },
     "4":{
         SHIFT:{"value" : "$"},
         VOID:{"value" : "4"},
+        "key_mask":DEFAULT_MASK
     },
     "5":{
         SHIFT:{"value" : "%"},
         VOID:{"value" : "5"},
+        "key_mask":DEFAULT_MASK
     },
     "6":{
         SHIFT:{"value" : "^"},
         VOID:{"value" : "6"},
+        "key_mask":DEFAULT_MASK
     },
     "7":{
         SHIFT:{"value" : "&"},
         VOID:{"value" : "7"},
+        "key_mask":DEFAULT_MASK
     },
     "8":{
         SHIFT:{"value" : "*"},
         VOID:{"value" : "8"},
+        "key_mask":DEFAULT_MASK
     },
     "9":{
         SHIFT:{"value" : "("},
         VOID:{"value" : "9"},
+        "key_mask":DEFAULT_MASK
     },
     "0":{
         SHIFT:{"value" : ")"},
         VOID:{"value" : "0"},
+        "key_mask":DEFAULT_MASK
     },
     "-":{
         SHIFT:{"value" : "_"},
         VOID:{"value" : "-"},
+        "key_mask":DEFAULT_MASK
     },
     "=":{
         SHIFT:{"value" : "+"},
         VOID:{"value" : "="},
+        "key_mask":DEFAULT_MASK
     },
     "\\":{
         SHIFT:{"value" : "|"},
         VOID:{"value" : "\\"},
+        "key_mask":DEFAULT_MASK
     },
 
     "tab":{
         VOID:{"value" : Key.tab},
+        "key_mask":NO_MOD_MASK
     },
     "q":{
         SHIFT:{"value" : "Q"},
         VOID:{"value" : "q"},
+        "key_mask":DEFAULT_MASK
     },
     "w":{
         SHIFT:{"value" : "W"},
         VOID:{"value" : "w"},
+        "key_mask":DEFAULT_MASK
     },
     "e":{
         SHIFT:{"value" : "E"},
         VOID:{"value" : "e"},
         ALT:{"value" : "€"},
+        "key_mask":DEFAULT_MASK
     },
     "r":{
         SHIFT:{"value" : "R"},
         VOID:{"value" : "r"},
+        "key_mask":DEFAULT_MASK
     },
     "t":{
         SHIFT:{"value" : "T"},
         VOID:{"value" : "t"},
+        "key_mask":DEFAULT_MASK
     },
     "y":{
         SHIFT:{"value" : "Y"},
         VOID:{"value" : "y"},
+        "key_mask":DEFAULT_MASK
     },
     "u":{
         SHIFT:{"value" : "U"},
         VOID:{"value" : "u"},
+        "key_mask":DEFAULT_MASK
     },
     "i":{
         SHIFT:{"value" : "I"},
         VOID:{"value" : "i"},
+        "key_mask":DEFAULT_MASK
     },
     "o":{
         SHIFT:{"value" : "O"},
         VOID:{"value" : "o"},
+        "key_mask":DEFAULT_MASK
     },
     "p":{
         SHIFT:{"value" : "P"},
         VOID:{"value" : "p"},
+        "key_mask":DEFAULT_MASK
     },
     "[":{
         SHIFT:{"value" : "{"},
         VOID:{"value" : "["},
+        "key_mask":DEFAULT_MASK
     },
     "]":{
         SHIFT:{"value" : "}"},
         VOID:{"value" : "]"},
+        "key_mask":DEFAULT_MASK
     },
     "a":{
         SHIFT:{"value" : "A"},
         VOID:{"value" : "a"},
+        "key_mask":DEFAULT_MASK
     },
     "s":{
         SHIFT:{"value" : "S"},
         VOID:{"value" : "s"},
+        "key_mask":DEFAULT_MASK
     },
     "d":{
         SHIFT:{"value" : "D"},
         VOID:{"value" : "d"},
+        "key_mask":DEFAULT_MASK
     },
     "f":{
         SHIFT:{"value" : "F"},
         VOID:{"value" : "f"},
+        "key_mask":DEFAULT_MASK
     },
     "g":{
         SHIFT:{"value" : "G"},
         VOID:{"value" : "g"},
+        "key_mask":DEFAULT_MASK
     },
     "h":{
         SHIFT:{"value" : "H"},
         VOID:{"value" : "h"},
+        "key_mask":DEFAULT_MASK
     },
     "j":{
         SHIFT:{"value" : "J"},
         VOID:{"value" : "j"},
+        "key_mask":DEFAULT_MASK
     },
     "k":{
         SHIFT:{"value" : "K"},
         VOID:{"value" : "k"},
+        "key_mask":DEFAULT_MASK
     },
     "l":{
         SHIFT:{"value" : "L"},
         VOID:{"value" : "l"},
+        "key_mask":DEFAULT_MASK
     },
     ";":{
         SHIFT:{"value" : ":"},
         VOID:{"value" : ";"},
+        "key_mask":DEFAULT_MASK
     },
     "#":{
         SHIFT:{"value" : "@"},
         VOID:{"value" : "#"},
+        "key_mask":DEFAULT_MASK
     },
     "z":{
         SHIFT:{"value" : "Z"},
         VOID:{"value" : "z"},
+        "key_mask":DEFAULT_MASK
     },
     "x":{
         SHIFT:{"value" : "X"},
         VOID:{"value" : "x"},
+        "key_mask":DEFAULT_MASK
     },
     "c":{
         SHIFT:{"value" : "C"},
         VOID:{"value" : "c"},
+        "key_mask":DEFAULT_MASK
     },
     "v":{
         SHIFT:{"value" : "V"},
         VOID:{"value" : "v"},
+        "key_mask":DEFAULT_MASK
     },
     "b":{
         SHIFT:{"value" : "B"},
         VOID:{"value" : "b"},
+        "key_mask":DEFAULT_MASK
     },
     "n":{
         SHIFT:{"value" : "N"},
         VOID:{"value" : "n"},
+        "key_mask":DEFAULT_MASK
     },
     "m":{
         SHIFT:{"value" : "M"},
         VOID:{"value" : "m"},
+        "key_mask":DEFAULT_MASK
     },
     ",":{
         SHIFT:{"value" : "<"},
         VOID:{"value" : ","},
+        "key_mask":DEFAULT_MASK
     },
     ".":{
         SHIFT:{"value" : ">"},
         VOID:{"value" : "."},
+        "key_mask":DEFAULT_MASK
     },
     "/":{
         SHIFT:{"value" : "?"},
         VOID:{"value" : "/"},
+        "key_mask":DEFAULT_MASK
     },
     "shift_right": {
-        IGNORE : {"value" : Key.shift_r}
+        VOID : {"value" : Key.shift_r},
+        "key_mask":NO_MOD_MASK
     },
     "shift_left": {
-        IGNORE : {"value" : Key.shift_l}
+        VOID : {"value" : Key.shift_l},
+        "key_mask":NO_MOD_MASK
     },
     "ctrl": {
-        IGNORE : {"value" : Key.ctrl_l}
+        VOID : {"value" : Key.ctrl_l},
+        "key_mask":NO_MOD_MASK
     },
     "alt_right": {
-        IGNORE : {"value" : Key.alt}
+        VOID : {"value" : Key.alt},
+        "key_mask":NO_MOD_MASK
     },
     "alt_left": {
-        IGNORE : {"value" : Key.alt}
+        VOID : {"value" : Key.alt},
+        "key_mask":NO_MOD_MASK
     },
     "amiga_left": {
-        IGNORE : {"value" : Key.cmd_l}
+        VOID : {"value" : Key.cmd_l},
+        "key_mask":NO_MOD_MASK
     },
     "amiga_right": {
-        IGNORE : {"value" : Key.cmd_r}
+        VOID : {"value" : Key.cmd_r},
+        "key_mask":NO_MOD_MASK
     },
     "space": {
-        VOID : {"value" : " "}
+        VOID : {"value" : " "},
+        "key_mask":NO_MOD_MASK
     },
     "up": {
-        VOID : {"value" : Key.up}
+        VOID : {"value" : Key.up},
+        "key_mask":NO_MOD_MASK
     },
     "down": {
-        VOID : {"value" : Key.down}
+        VOID : {"value" : Key.down},
+        "key_mask":NO_MOD_MASK
     },
     "right": {
-        VOID : {"value" : Key.right}
+        VOID : {"value" : Key.right},
+        "key_mask":NO_MOD_MASK
     },
     "left": {
-        VOID : {"value" : Key.left}
+        VOID : {"value" : Key.left},
+        "key_mask":NO_MOD_MASK
     },
     "enter": {
-        VOID : {"value" : Key.enter}
+        VOID : {"value" : Key.enter},
+        "key_mask":NO_MOD_MASK
     },
     "backspace": {
-        VOID : {"value" : Key.backspace}
+        VOID : {"value" : Key.backspace},
+        "key_mask":NO_MOD_MASK
     },
     "del": {
-        VOID : {"value" : Key.delete}
+        VOID : {"value" : Key.delete},
+        "key_mask":NO_MOD_MASK
     },
     "esc": {
-        VOID : {"value" : Key.esc}
+        VOID : {"value" : Key.esc},
+        "key_mask":NO_MOD_MASK
     },
     "F1": {
-        VOID : {"value" : Key.f1}
+        VOID : {"value" : Key.f1},
+        "key_mask":NO_MOD_MASK
     },
     "F2": {
-        VOID : {"value" : Key.f2}
+        VOID : {"value" : Key.f2},
+        "key_mask":NO_MOD_MASK
     },
     "F3": {
-        VOID : {"value" : Key.f3}
+        VOID : {"value" : Key.f3},
+        "key_mask":NO_MOD_MASK
     },
     "F4": {
-        VOID : {"value" : Key.f4}
+        VOID : {"value" : Key.f4},
+        "key_mask":NO_MOD_MASK
     },
     "F5": {
-        VOID : {"value" : Key.f5}
+        VOID : {"value" : Key.f5},
+        "key_mask":NO_MOD_MASK
     },
     "F6": {
-        VOID : {"value" : Key.f6}
+        VOID : {"value" : Key.f6},
+        "key_mask":NO_MOD_MASK
     },
     "F7": {
-        VOID : {"value" : Key.f7}
+        VOID : {"value" : Key.f7},
+        "key_mask":NO_MOD_MASK
     },
     "F8": {
-        VOID : {"value" : Key.f8}
+        VOID : {"value" : Key.f8},
+        "key_mask":NO_MOD_MASK
     },
     "F9": {
-        VOID : {"value" : Key.f9}
+        VOID : {"value" : Key.f9},
+        "key_mask":NO_MOD_MASK
     },
     "F10": {
-        VOID : {"value" : Key.f10}
+        VOID : {"value" : Key.f10},
+        "key_mask":NO_MOD_MASK
     },
     "help": {
-        VOID : {"value" : Key.f11}
+        VOID : {"value" : Key.f11},
+        "key_mask":NO_MOD_MASK
     },
     
 
@@ -458,14 +535,9 @@ def get_key_configuration(labeled_key, mask):
     return keymap[labeled_key].get(mask, {})
 
 def apply_keymap():
-
-
     for labeled_key in pressed_keys:
-        if "value" in get_key_configuration(labeled_key, IGNORE):
-            conf = get_key_configuration(labeled_key, IGNORE)
-        else:
-            mask = modifiers & (~CAPS_LOCKS)
-            conf = get_key_configuration(labeled_key, mask)
+        mask = modifiers & keymap[labeled_key]["key_mask"]
+        conf = get_key_configuration(labeled_key, mask)
 
         if "value" in conf:
             real_key = conf["value"]
