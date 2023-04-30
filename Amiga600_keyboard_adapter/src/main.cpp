@@ -18,14 +18,14 @@ uint8_t output[OUTPUT_SIZE] = {0};
 #define LENGTH_OFFSET (HEADER_OFFSET + HEADER_SIZE)
 #define DATA_OFFSET (LENGTH_OFFSET + LENGTH_SIZE)
 
-const unsigned long interval = 10000; 
+const unsigned long interval = 1000; 
 unsigned long previousMicros = 0;
 
 void setup()
 {
   init_spi();
   init_kb_reader();
-  Serial.begin(115200);
+  Serial.begin(460800);
   memcpy(&output[HEADER_OFFSET], HEADER, HEADER_SIZE);
 }
 

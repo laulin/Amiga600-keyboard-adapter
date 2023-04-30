@@ -4,7 +4,7 @@ from pynput.keyboard import Key
 
 
 arduino_port = "/dev/ttyACM0"
-arduino_baudrate = 115200
+arduino_baudrate = 460800
 
 ser = serial.Serial(arduino_port, arduino_baudrate)
 keyboard = Controller()
@@ -549,9 +549,11 @@ def apply_keymap():
             if pressed_keys[labeled_key] == 0:
                 applied_keymap[labeled_key] = real_key
                 keyboard.press(real_key)
+                #print(f"press {labeled_key} ({real_key})")
             if pressed_keys[labeled_key] > 30:
                 keyboard.press(real_key)
                 pressed_keys[labeled_key] = 25
+                #print(f"press {labeled_key} ({real_key})")
 
     for labeled_key in released_keys:
         if labeled_key in applied_keymap:
