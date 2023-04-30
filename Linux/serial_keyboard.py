@@ -446,6 +446,12 @@ UK_KEYMAP = {
         VOID : {"value" : Key.f11},
         "key_mask":NO_MOD_MASK
     },
+    "void_right": {
+        "key_mask":NO_MOD_MASK
+    },
+    "void_left": {
+        "key_mask":NO_MOD_MASK
+    },
     
 
 }
@@ -454,7 +460,7 @@ UK_KEYMAP = {
 
 
 class SerialKeyboard:
-    def __init__(self, port:str="/dev/ttyACM0", baudrate:int=460800, labels=UK_LABELS, keymap=UK_KEYMAP, first_repeat:int=50, other_repeat:int=10):
+    def __init__(self, port:str="/dev/ttyACM0", baudrate:int=460800, labels=UK_LABELS, keymap=UK_KEYMAP, first_repeat:int=100, other_repeat:int=30):
         self._port = port
         self._baudrate = baudrate
         self._serial = None
@@ -540,7 +546,7 @@ class SerialKeyboard:
     def apply_keymap(self, released_keys:set):
         for labeled_key in self._pressed_keys:
             mask = self._modifiers & self._keymap[labeled_key]["key_mask"]
-            conf = self._keymap[labeled_key][mask]
+            conf = self._keymap[labeled_key].get(mask, {})
 
             if "value" in conf:
                 real_key = conf["value"]
