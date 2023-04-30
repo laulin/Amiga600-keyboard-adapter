@@ -171,6 +171,9 @@ keymap = {
         VOID:{"value" : "\\"},
     },
 
+    "tab":{
+        VOID:{"value" : Key.tab},
+    },
     "q":{
         SHIFT:{"value" : "Q"},
         VOID:{"value" : "q"},
@@ -452,7 +455,7 @@ def read_kbn_frame(ser:serial.Serial)->bytes:
 applied_keymap = {}
 
 def get_key_configuration(labeled_key, mask):
-    return keymap.get(labeled_key, {}).get(mask, {})
+    return keymap[labeled_key].get(mask, {})
 
 def apply_keymap():
 
