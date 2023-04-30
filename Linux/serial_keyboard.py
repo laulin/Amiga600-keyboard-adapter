@@ -1,5 +1,6 @@
 import serial
 from pynput.keyboard import Controller
+from pynput.keyboard import Key
 
 
 arduino_port = "/dev/ttyACM0"
@@ -8,7 +9,8 @@ arduino_baudrate = 115200
 ser = serial.Serial(arduino_port, arduino_baudrate)
 keyboard = Controller()
 
-activated_keys = {}
+pressed_keys = {}
+released_keys = set()
 
 LABELS = {
     0xDF : "esc",
@@ -99,6 +101,39 @@ modifiers = {
     "caps_locks" : False
 }
 
+SHIFT = 1
+ALT = 2
+AMIGA_RIGHT = 4
+AMIGA_LEFT = 8
+CTRL = 16
+CAPS_LOCKS = 32
+VOID = 0
+IGNORE = -1
+
+modifier_masks = {
+    "shift" : SHIFT,
+    "alt" : ALT,
+    "amiga_right" : AMIGA_RIGHT,
+    "amiga_left" : AMIGA_LEFT,
+    "ctrl" : CTRL,
+    "caps_locks" : CAPS_LOCKS
+}
+
+keymap = {
+    "q":{
+        SHIFT:{"value" : "Q"},
+        VOID:{"value" : "q"},
+    },
+    "e":{
+        SHIFT:{"value" : "E"},
+        VOID:{"value" : "e"},
+        ALT:{"value" : "€"},
+    },
+    "shift_right": {
+        IGNORE : {"value" : Key.shift_r}
+    }
+}
+
 def set_modifiers():
     modifiers["shift"] = False
     modifiers["alt"] = False
@@ -106,23 +141,23 @@ def set_modifiers():
     modifiers["amiga_right"] = False
     modifiers["amiga_left"] = False
 
-    if "shift_right" in activated_keys or "shift_left" in activated_keys:
+    if "shift_right" in pressed_keys or "shift_left" in pressed_keys:
         modifiers["shift"] = True
 
-    if "alt_right" in activated_keys or "alt_left" in activated_keys:
+    if "alt_right" in pressed_keys or "alt_left" in pressed_keys:
         modifiers["alt"] = True
 
-    if "ctrl" in activated_keys:
+    if "ctrl" in pressed_keys:
         modifiers["ctrl"] = True
 
-    if "amiga_right" in activated_keys:
+    if "amiga_right" in pressed_keys:
         modifiers["amiga_right"] = True
 
-    if "amiga_left" in activated_keys:
+    if "amiga_left" in pressed_keys:
         modifiers["amiga_left"] = True
 
-    if "caps_locks" in activated_keys:
-        if activated_keys["caps_locks"] == 0:
+    if "caps_locks" in pressed_keys:
+        if pressed_keys["caps_locks"] == 0:
             modifiers["caps_locks"] = True ^ modifiers["caps_locks"]
 
 
@@ -162,28 +197,70 @@ def read_kbn_frame(ser:serial.Serial)->bytes:
                 else:
                     return b""
 
+applied_keymap = {}
+
+def make_mask():
+    mask = VOID
+    for modifier, value in modifiers.items():
+        if value:
+            mask |= modifier_masks[modifier]
+    return mask
+
+def get_key_configuration(labeled_key, mask):
+    return keymap.get(labeled_key, {}).get(mask, {})
+
+def apply_keymap():
+
+
+    for labeled_key in pressed_keys:
+        if "value" in get_key_configuration(labeled_key, IGNORE):
+            conf = get_key_configuration(labeled_key, IGNORE)
+        else:
+            mask = make_mask()
+            conf = get_key_configuration(labeled_key, mask)
+
+        if "value" in conf:
+            real_key = conf["value"]
+            if labeled_key in applied_keymap and applied_keymap[labeled_key] != real_key:
+                pressed_keys[labeled_key] = 0
+                keyboard.release(applied_keymap[labeled_key])
+                del applied_keymap[labeled_key]
+
+            if pressed_keys[labeled_key] == 0:
+                applied_keymap[labeled_key] = real_key
+                keyboard.press(real_key)
+            if pressed_keys[labeled_key] > 30:
+                keyboard.press(real_key)
+                pressed_keys[labeled_key] = 25
+
+    for labeled_key in released_keys:
+        if labeled_key in applied_keymap:
+            keyboard.release(applied_keymap[labeled_key])
+            del applied_keymap[labeled_key]
+
+
 try:
     while True:
         keys = read_kbn_frame(ser)
         keys = [LABELS[k] for k in keys]
         for key in keys:
-            if key not in activated_keys:
-                activated_keys[key] = 0
-                if key == "q":
-                    keyboard.tap("Q")
+            if key not in pressed_keys:
+                pressed_keys[key] = 0
             else:
-                activated_keys[key] += 1
+                pressed_keys[key] += 1
 
-        released_keys = set(activated_keys.keys()) - set(keys)
+        released_keys = set(pressed_keys.keys()) - set(keys)
 
         for release_key in released_keys:
-            del activated_keys[release_key]
+            del pressed_keys[release_key]
 
-        # if len(activated_keys) > 0:
-        #     print(activated_keys)
+        # if len(pressed_keys) > 0:
+        #     print(pressed_keys)
         set_modifiers()
         # if any(modifiers.values()):
         #     print(modifiers)
+
+        apply_keymap()
         
 
 except KeyboardInterrupt:
