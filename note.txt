@@ -192,3 +192,8 @@ alt right : 0x60
 left arrow : 0xB1
 down arrow : 0x71
 right arrow : 0x91
+
+links : 
+
+* https://fs-uae.net/docs/keyboard-mapping
+* https://wiki.amigaos.net/wiki/UI_Style_Guide_Keyboard
