@@ -1,4 +1,8 @@
+import logging
+import time
+
 import serial
+import serial.serialutil
 from pynput.keyboard import Controller
 from pynput.keyboard import Key
 
@@ -452,33 +456,28 @@ UK_KEYMAP = {
     "void_left": {
         "key_mask":NO_MOD_MASK
     },
+    "caps_locks": {
+        "key_mask":NO_MOD_MASK
+    },
     
 
 }
 
-
-
-
-class SerialKeyboard:
-    def __init__(self, port:str="/dev/ttyACM0", baudrate:int=460800, labels=UK_LABELS, keymap=UK_KEYMAP, first_repeat:int=100, other_repeat:int=30):
+class SerialInterface:
+    def __init__(self, port:str="/dev/ttyACM0", baudrate:int=460800) -> None:
         self._port = port
         self._baudrate = baudrate
         self._serial = None
-        self._keyboard = Controller()
 
-        self._labels = labels
-        self._keymap = keymap
-        self._first_repeat = first_repeat
-        self._other_repeat = other_repeat
-
-        self._modifiers = VOID
-        self._applied_keymap = {}
-        self._pressed_keys = {}
-
-    def setup(self):
+    def __enter__(self):
         self._serial = serial.Serial(self._port, self._baudrate)
+        return self
 
-    def read_kbn_frame(self)->list:
+    def __exit__(self, exc_type, exc_value, exc_traceback):
+        if self._serial:
+            self._serial.close()
+
+    def read_kbn_frame(self)->bytes:
         buffer = []
         while True:
             if len(buffer)  == 0 :
@@ -499,21 +498,50 @@ class SerialKeyboard:
                 else:
                     size = int.from_bytes(self._serial.read(1), "little")
                     if size > 0:
-                        return [self._labels [k] for k in self._serial.read(size)]
+                        return self._serial.read(size)
                     else:
-                        return []
-                    
+                        return b""
+    def __str__(self):
+        return f"{self._port} @ {self._baudrate}"
+
+
+class SerialKeyboard:
+    def __init__(self, serial:SerialInterface, labels=UK_LABELS, keymap=UK_KEYMAP, first_repeat:int=100, other_repeat:int=30):
+        self._serial = serial
+        self._keyboard = Controller()
+
+        self._labels = labels
+        self._keymap = keymap
+        self._first_repeat = first_repeat
+        self._other_repeat = other_repeat
+
+        self._modifiers = VOID
+        self._applied_keymap = {}
+        self._pressed_keys = {}
+        self._log = logging.getLogger("SerialKeyboard")
+                   
     def do(self):
         while True:
-            keys = self.read_kbn_frame()
+            try:
+                with self._serial as s:
+                    keys = s.read_kbn_frame()
+            except serial.serialutil.SerialException as e:
+                time.sleep(1)
+                self._log.error(f"can't connect to Serial port {self._serial}")
+                continue
+            
+            keys = [self._labels [k] for k in keys]
             for key in keys:
                 if key not in self._pressed_keys:
                     self._pressed_keys[key] = 0
+                    self._log.debug(f"Raw keycode {key} hit")
                 else:
                     self._pressed_keys[key] += 1
 
             released_keys = set(self._pressed_keys.keys()) - set(keys)
 
+            if len(released_keys) > 0:
+                self._log.debug(f"Raw keycode {key} release")
             for release_key in released_keys:
                 del self._pressed_keys[release_key]
 
@@ -553,11 +581,13 @@ class SerialKeyboard:
                 if labeled_key in self._applied_keymap and self._applied_keymap[labeled_key] != real_key:
                     self._pressed_keys[labeled_key] = 0
                     self._keyboard.release(self._applied_keymap[labeled_key])
+                    self._log.debug(f"Key {labeled_key} release")
                     del self._applied_keymap[labeled_key]
 
                 if self._pressed_keys[labeled_key] == 0:
                     self._applied_keymap[labeled_key] = real_key
                     self._keyboard.press(real_key)
+                    self._log.debug(f"Key {real_key} hit")
                 if self._pressed_keys[labeled_key] > (self._first_repeat + self._other_repeat):
                     self._keyboard.press(real_key)
                     self._pressed_keys[labeled_key] = self._first_repeat
@@ -565,17 +595,16 @@ class SerialKeyboard:
         for labeled_key in released_keys:
             if labeled_key in self._applied_keymap:
                 self._keyboard.release(self._applied_keymap[labeled_key])
+                self._log.debug(f"Key {labeled_key} release")
                 del self._applied_keymap[labeled_key]
-
-    def close(self):
-        self._serial.close()
             
 
 if __name__ == "__main__":
-    serial_keyboard = SerialKeyboard()
-    serial_keyboard.setup()
+    logging.basicConfig(level=logging.DEBUG)
+    serial_interface = SerialInterface()
+    serial_keyboard = SerialKeyboard(serial_interface)
     try:
         serial_keyboard.do()            
 
     except KeyboardInterrupt:
-        serial_keyboard.close()
+        pass
